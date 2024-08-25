@@ -1,0 +1,38 @@
+require("dotenv").config();
+
+const env = {
+  PORT: process.env.PORT,
+  MONGODB_USER_URI: process.env.MONGODB_USER_URI,
+  NODE_ENV: process.env.NODE_ENV,
+  API_KEY: process.env.API_KEY,
+  SECRET_KEY: process.env.SECRET_KEY,
+  TOKEN_EXPIRES_IN: process.env.TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN,
+  OTP_DIGIT: process.env.OTP_DIGIT,
+  SALT_ROUND: process.env.SALT_ROUND,
+  OTP_EXPIRES_IN: process.env.OTP_EXPIRES_IN,
+  COMPANY_OTP_EXPIRE_IN: process.env.COMPANY_OTP_EXPIRE_IN,
+  MAX_LOGIN_DEVICE: process.env.MAX_LOGIN_DEVICE,
+  DB_HOST: process.env.DB_HOST,
+  DB_NAME: process.env.DB_NAME,
+  DB_USER: process.env.DB_USER,
+  DB_PASSWORD: process.env.DB_PASSWORD,
+  PAGE: process.env.PAGE,
+  LIMIT: process.env.LIMIT,
+  SMTP_HOST: process.env.SMTP_HOST,
+  SMTP_PORT: process.env.SMTP_PORT,
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+  ACCESS_KEY: process.env.ACCESS_KEY,
+  END_POINT: process.env.END_POINT,
+  S3_FORCE_PATH_STYLE: process.env.S3_FORCE_PATH_STYLE,
+  BUCKET: process.env.BUCKET,
+  LICENSE_FOLDER: process.env.LICENSE_FOLDER,
+  AUDIO_FOLDER: process.env.AUDIO_FOLDER,
+  ACL: process.env.ACL,
+  AUDIO_URL: process.env.AUDIO_URL,
+  LICENSE_URL: process.env.LICENSE_URL,
+  BULK_IMPORT: process.env.BULK_IMPORT,
+};
+
+module.exports = { env };
