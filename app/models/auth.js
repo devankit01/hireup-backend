@@ -1,4 +1,4 @@
-const { USER_TYPE, USER_STATUS } = require("../constant/auth");
+const { USER_TYPE, USER_STATUS, COMPANY_TYPE } = require("../constant/auth");
 
 module.exports = (sequelize, DataTypes, UUIDV4) => {
   const Auth = sequelize.define(
@@ -39,6 +39,34 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       },
       password: {
         type: DataTypes.STRING,
+        allowNull: false,
+      },
+      college_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      roll_umber: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      college_code: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      company_code: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      company_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      company_type: {
+        type: DataTypes.ENUM(
+          COMPANY_TYPE.STARTUP,
+          COMPANY_TYPE.MIDSIZE,
+          COMPANY_TYPE.MNC
+        ),
         allowNull: true,
       },
       role: {
@@ -46,7 +74,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
           USER_TYPE.COLLEGE,
           USER_TYPE.COMPANY,
           USER_TYPE.RECRUITER,
-          USER_TYPE.STUDENT,
+          USER_TYPE.STUDENT
         ),
         allowNull: false,
       },
@@ -55,7 +83,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
           USER_STATUS.ACTIVE,
           USER_STATUS.DELETED,
           USER_STATUS.IN_ACTIVE,
-          USER_STATUS.PENDING,
+          USER_STATUS.PENDING
         ),
         defaultValue: USER_STATUS.PENDING,
       },
@@ -70,7 +98,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       createdAt: "created_at",
       updatedAt: "updated_at",
       deletedAt: "deleted_at",
-    },
+    }
   );
   Auth.associate = (models) => {
     Auth.hasMany(models.sessions, { foreignKey: "auth_id" });

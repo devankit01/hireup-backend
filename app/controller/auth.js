@@ -11,6 +11,8 @@ const {
   USER_TYPE,
 } = require("../constant/auth");
 const commonService = require("../services/common");
+const authMapper = require("../mapper/auth");
+const messages = require("../response/lng/en.json");
 
 exports.login = async (req, res, next) => {
   try {
@@ -65,7 +67,7 @@ exports.login = async (req, res, next) => {
         res,
         { msgCode: "INTERNAL_SERVER_ERROR" },
         httpStatus.INTERNAL_SERVER_ERROR,
-        dbTrans,
+        dbTrans
       );
     }
     // Passing login data to another middleware
@@ -83,7 +85,185 @@ exports.login = async (req, res, next) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans,
+      dbTrans
+    );
+  }
+};
+
+exports.studentSignUp = async (req, res, next) => {
+  const dbTrans = await db.transaction();
+  try {
+    const userData = { ...req.body, role: USER_TYPE.STUDENT };
+    userData.password = await passwordHash.generateHash(userData.password);
+
+    const createdUser = await commonService.createUser(userData);
+    const userDetails = createdUser.toJSON();
+    userDetails.token = authJwt.generateAuthJwt({
+      id: userDetails.id,
+      user_id: userDetails.user_id,
+      role: userDetails.role,
+      email: userDetails.email,
+      device_id: userDetails.device_id,
+      approval: userDetails.approval,
+      status: userDetails.status,
+      expires_in: env.TOKEN_EXPIRES_IN,
+    });
+
+    const responseData = {
+      data: authMapper.studentSignUpMapper(userDetails),
+      msgCode: messages.SIGNUP_SUCCESSFUL,
+    };
+
+    return response.success(
+      req,
+      res,
+      responseData,
+      httpStatus.CREATED,
+      dbTrans
+    );
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR,
+      dbTrans
+    );
+  }
+};
+
+exports.collegeSignUp = async (req, res, next) => {
+  const dbTrans = await db.transaction();
+  try {
+    const collegeData = { ...req.body, role: USER_TYPE.COLLEGE };
+    collegeData.password = await passwordHash.generateHash(
+      collegeData.password
+    );
+
+    const createdCollege = await commonService.createUser(collegeData);
+    const collegeDetails = createdCollege.toJSON();
+    collegeDetails.token = authJwt.generateAuthJwt({
+      id: collegeDetails.id,
+      user_id: collegeDetails.user_id,
+      role: collegeDetails.role,
+      email: collegeDetails.email,
+      device_id: collegeDetails.device_id,
+      approval: collegeDetails.approval,
+      status: collegeDetails.status,
+      expires_in: env.TOKEN_EXPIRES_IN,
+    });
+
+    const responseData = {
+      data: authMapper.collegeSignUpMapper(collegeDetails),
+      msgCode: messages.SIGNUP_SUCCESSFUL,
+    };
+
+    return response.success(
+      req,
+      res,
+      responseData,
+      httpStatus.CREATED,
+      dbTrans
+    );
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR,
+      dbTrans
+    );
+  }
+};
+
+exports.companySignUp = async (req, res, next) => {
+  const dbTrans = await db.transaction();
+  try {
+    const companyData = { ...req.body, role: USER_TYPE.COLLEGE };
+    companyData.password = await passwordHash.generateHash(
+      companyData.password
+    );
+
+    const createdCompany = await commonService.createUser(companyData);
+    const companyDetails = createdCompany.toJSON();
+    companyDetails.token = authJwt.generateAuthJwt({
+      id: companyDetails.id,
+      user_id: companyDetails.user_id,
+      role: companyDetails.role,
+      email: companyDetails.email,
+      device_id: companyDetails.device_id,
+      approval: companyDetails.approval,
+      status: companyDetails.status,
+      expires_in: env.TOKEN_EXPIRES_IN,
+    });
+
+    const responseData = {
+      data: authMapper.companySignUpMapper(companyDetails),
+      msgCode: messages.SIGNUP_SUCCESSFUL,
+    };
+
+    return response.success(
+      req,
+      res,
+      responseData,
+      httpStatus.CREATED,
+      dbTrans
+    );
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR,
+      dbTrans
+    );
+  }
+};
+
+exports.recruiterSignUp = async (req, res, next) => {
+  const dbTrans = await db.transaction();
+  try {
+    const recruiterData = { ...req.body, role: USER_TYPE.RECRUITER };
+    recruiterData.password = await passwordHash.generateHash(
+      recruiterData.password
+    );
+
+    const createdRecruiter = await commonService.createUser(recruiterData);
+    const recruiterDetails = createdRecruiter.toJSON();
+    recruiterDetails.token = authJwt.generateAuthJwt({
+      id: recruiterDetails.id,
+      user_id: recruiterDetails.user_id,
+      role: recruiterDetails.role,
+      email: recruiterDetails.email,
+      device_id: recruiterDetails.device_id,
+      approval: recruiterDetails.approval,
+      status: recruiterDetails.status,
+      expires_in: env.TOKEN_EXPIRES_IN,
+    });
+
+    const responseData = {
+      data: authMapper.recruiterSignUpMapper(recruiterDetails),
+      msgCode: messages.SIGNUP_SUCCESSFUL,
+    };
+
+    return response.success(
+      req,
+      res,
+      responseData,
+      httpStatus.CREATED,
+      dbTrans
+    );
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR,
+      dbTrans
     );
   }
 };
@@ -98,7 +278,7 @@ exports.createSession = async (req, res) => {
 
     const checkSession = await commonService.findByCondition(
       sessions,
-      condition,
+      condition
     );
 
     if (checkSession) {
@@ -109,7 +289,7 @@ exports.createSession = async (req, res) => {
         sessions,
         condition,
         dbTrans,
-        true,
+        true
       );
       if (!destroySession) {
         return response.error(
@@ -117,7 +297,7 @@ exports.createSession = async (req, res) => {
           res,
           { msgCode: helper.getErrorMsgCode(req) },
           httpStatus.INTERNAL_SERVER_ERROR,
-          dbTrans,
+          dbTrans
         );
       }
     }
@@ -134,7 +314,7 @@ exports.createSession = async (req, res) => {
     const createSession = await commonService.addDetail(
       sessions,
       sessionData,
-      dbTrans,
+      dbTrans
     );
     if (!createSession) {
       return response.error(
@@ -142,7 +322,7 @@ exports.createSession = async (req, res) => {
         res,
         { msgCode: helper.getErrorMsgCode(req) },
         httpStatus.INTERNAL_SERVER_ERROR,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -154,7 +334,7 @@ exports.createSession = async (req, res) => {
       res,
       { msgCode, data },
       httpStatus.OK,
-      dbTrans,
+      dbTrans
     );
   } catch (error) {
     return response.error(
@@ -162,7 +342,7 @@ exports.createSession = async (req, res) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans,
+      dbTrans
     );
   }
 };
@@ -183,7 +363,7 @@ exports.forgotPassword = async (req, res) => {
             "Please enter valid email address, Email Id is not Registered",
         },
         httpStatus.NOT_FOUND,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -206,7 +386,7 @@ exports.forgotPassword = async (req, res) => {
         otps,
         { otp: hashOtp },
         condition,
-        dbTrans,
+        dbTrans
       );
       if (!updateData) {
         return response.error(
@@ -214,7 +394,7 @@ exports.forgotPassword = async (req, res) => {
           res,
           { msgCode: "OTP_NOT_SEND" },
           httpStatus.FORBIDDEN,
-          dbTrans,
+          dbTrans
         );
       }
     }
@@ -224,7 +404,7 @@ exports.forgotPassword = async (req, res) => {
     const createOtpDetails = await commonService.addDetail(
       otps,
       otpData,
-      dbTrans,
+      dbTrans
     );
     if (!createOtpDetails) {
       return response.error(
@@ -232,7 +412,7 @@ exports.forgotPassword = async (req, res) => {
         res,
         { msgCode: "OTP_NOT_SEND" },
         httpStatus.FORBIDDEN,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -250,7 +430,7 @@ exports.forgotPassword = async (req, res) => {
         data: { token: token, OTP: otp, email },
       },
       httpStatus.OK,
-      dbTrans,
+      dbTrans
     );
   } catch (error) {
     console.log(error);
@@ -259,7 +439,7 @@ exports.forgotPassword = async (req, res) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans,
+      dbTrans
     );
   }
 };
@@ -281,7 +461,7 @@ exports.verifyOtp = async (req, res, next) => {
         res,
         { msgCode: "INVALID_EMAIL" },
         httpStatus.BAD_REQUEST,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -292,7 +472,7 @@ exports.verifyOtp = async (req, res, next) => {
         res,
         { msgCode: "OTP_EXPIRED" },
         httpStatus.BAD_REQUEST,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -303,7 +483,7 @@ exports.verifyOtp = async (req, res, next) => {
         res,
         { msgCode: "INCORRECT_OTP" },
         httpStatus.BAD_REQUEST,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -319,7 +499,7 @@ exports.verifyOtp = async (req, res, next) => {
         res,
         { msgCode: "EMAIL_v_FAILED" },
         httpStatus.FORBIDDEN,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -327,7 +507,7 @@ exports.verifyOtp = async (req, res, next) => {
       otps,
       condition,
       dbTrans,
-      true,
+      true
     );
     if (!deleteOtp) {
       return response.error(
@@ -335,7 +515,7 @@ exports.verifyOtp = async (req, res, next) => {
         res,
         { msgCode: "EMAIL_v_FAILED" },
         httpStatus.FORBIDDEN,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -345,7 +525,7 @@ exports.verifyOtp = async (req, res, next) => {
       res,
       { msgCode: "OTP_VERIFIED", data },
       httpStatus.ACCEPTED,
-      dbTrans,
+      dbTrans
     );
   } catch (error) {
     return response.error(
@@ -353,7 +533,7 @@ exports.verifyOtp = async (req, res, next) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans,
+      dbTrans
     );
   }
 };
@@ -375,7 +555,7 @@ exports.resetPassword = async (req, res) => {
         res,
         { msgCode: "INVALID_TOKEN" },
         httpStatus.UNAUTHORIZED,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -386,7 +566,7 @@ exports.resetPassword = async (req, res) => {
         res,
         { msgCode: "USER_NOT_FOUND" },
         httpStatus.NOT_FOUND,
-        dbTrans,
+        dbTrans
       );
 
     let newPassword = passwordHash.decryptData(new_password);
@@ -404,7 +584,7 @@ exports.resetPassword = async (req, res) => {
         res,
         { msgCode: "PASSWORD_NOT_MATCHED" },
         httpStatus.FORBIDDEN,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -418,7 +598,7 @@ exports.resetPassword = async (req, res) => {
       auths,
       data,
       condition,
-      dbTrans,
+      dbTrans
     );
     if (updateUser.modifiedCount === 0)
       return response.error(
@@ -426,7 +606,7 @@ exports.resetPassword = async (req, res) => {
         res,
         { msgCode: "UPDATE_ERROR" },
         httpStatus.FORBIDDEN,
-        dbTrans,
+        dbTrans
       );
     await commonService.deleteQuery(sessions, condition, dbTrans, true);
 
@@ -435,7 +615,7 @@ exports.resetPassword = async (req, res) => {
       res,
       { msgCode: "PASSWORD_UPDATED" },
       httpStatus.CREATED,
-      dbTrans,
+      dbTrans
     );
   } catch (error) {
     return response.error(
@@ -443,7 +623,7 @@ exports.resetPassword = async (req, res) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans,
+      dbTrans
     );
   }
 };
@@ -459,7 +639,7 @@ exports.logout = async (req, res) => {
       sessions,
       condition,
       dbTrans,
-      true,
+      true
     );
 
     if (!destroySession) {
@@ -468,7 +648,7 @@ exports.logout = async (req, res) => {
         res,
         { msgCode: "USER_NOT_LOGOUT" },
         httpStatus.INTERNAL_SERVER_ERROR,
-        dbTrans,
+        dbTrans
       );
     }
     return response.success(
@@ -476,7 +656,7 @@ exports.logout = async (req, res) => {
       res,
       { msgCode: "LOGOUT_SUCCESSFUL" },
       httpStatus.OK,
-      dbTrans,
+      dbTrans
     );
   } catch (error) {
     return response.error(
@@ -484,7 +664,7 @@ exports.logout = async (req, res) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans,
+      dbTrans
     );
   }
 };
@@ -505,7 +685,7 @@ exports.resendOtp = async (req, res) => {
         res,
         { msgCode: "User not found" },
         httpStatus.FORBIDDEN,
-        dbTrans,
+        dbTrans
       );
     }
     const token = authJwt.generateAuthJwt({
@@ -522,7 +702,7 @@ exports.resendOtp = async (req, res) => {
         otps,
         { otp: hashOtp },
         condition,
-        dbTrans,
+        dbTrans
       );
       if (!updateData) {
         return response.error(
@@ -530,7 +710,7 @@ exports.resendOtp = async (req, res) => {
           res,
           { msgCode: "OTP_NOT_SEND" },
           httpStatus.FORBIDDEN,
-          dbTrans,
+          dbTrans
         );
       }
     }
@@ -540,7 +720,7 @@ exports.resendOtp = async (req, res) => {
     const createOtpDetails = await commonService.addDetail(
       otps,
       otpData,
-      dbTrans,
+      dbTrans
     );
 
     if (!createOtpDetails) {
@@ -549,7 +729,7 @@ exports.resendOtp = async (req, res) => {
         res,
         { msgCode: "OTP_NOT_SEND" },
         httpStatus.FORBIDDEN,
-        dbTrans,
+        dbTrans
       );
     }
 
@@ -566,7 +746,7 @@ exports.resendOtp = async (req, res) => {
         data: { token: token, OTP: otp, email },
       },
       httpStatus.OK,
-      dbTrans,
+      dbTrans
     );
   } catch (error) {
     console.log(error);
@@ -575,7 +755,7 @@ exports.resendOtp = async (req, res) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans,
+      dbTrans
     );
   }
 };
@@ -597,7 +777,7 @@ exports.getAccessToken = async (req, res) => {
       sessions,
       { jwt_token: token },
       { refresh_token: req.headers.refresh_token },
-      dbTrans,
+      dbTrans
     );
     if (!updateSession) {
       return response.error(
@@ -605,7 +785,7 @@ exports.getAccessToken = async (req, res) => {
         res,
         { msgCode: "UNAUTHORISED" },
         httpStatus.UNAUTHORIZED,
-        dbTrans,
+        dbTrans
       );
     }
     return response.success(
@@ -613,7 +793,7 @@ exports.getAccessToken = async (req, res) => {
       res,
       { msgCode: "SUCCESS", data: { token: token } },
       httpStatus.OK,
-      dbTrans,
+      dbTrans
     );
   } catch (error) {
     console.log(error);
@@ -622,7 +802,7 @@ exports.getAccessToken = async (req, res) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans,
+      dbTrans
     );
   }
 };
@@ -641,7 +821,7 @@ exports.checkUserStatus = async (req, res, next) => {
         req,
         res,
         { msgCode: "USER_NOT_FOUND" },
-        httpStatus.UNAUTHORIZED,
+        httpStatus.UNAUTHORIZED
       );
     }
     if (!checkUser?.password) {
@@ -649,14 +829,14 @@ exports.checkUserStatus = async (req, res, next) => {
         req,
         res,
         { msgCode: "USER_NOT_FOUND_PLEASE_SIGNUP" },
-        httpStatus.UNAUTHORIZED,
+        httpStatus.UNAUTHORIZED
       );
     }
 
     const currentTime = new Date();
     const updatetedAt = new Date(checkUser.updated_at);
     const timeDifferenceMinutes = Math.floor(
-      (currentTime - updatetedAt) / (1000 * 60),
+      (currentTime - updatetedAt) / (1000 * 60)
     );
 
     if (checkUser.login_attempts > 5 && timeDifferenceMinutes <= 60) {
@@ -670,7 +850,7 @@ exports.checkUserStatus = async (req, res, next) => {
             (60 - timeDifferenceMinutes) +
             " Minutes",
         },
-        httpStatus.UNAUTHORIZED,
+        httpStatus.UNAUTHORIZED
       );
     }
     req.data = { checkUser };
@@ -681,7 +861,7 @@ exports.checkUserStatus = async (req, res, next) => {
       req,
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
-      httpStatus.INTERNAL_SERVER_ERROR,
+      httpStatus.INTERNAL_SERVER_ERROR
     );
   }
 };
@@ -711,7 +891,7 @@ exports.matchUserPassword = async (req, res, next) => {
         res,
         { msgCode: "INVALID_CREDENTIALS", data: "Invalid Credentials." },
         httpStatus.UNAUTHORIZED,
-        dbTrans,
+        dbTrans
       );
     }
     req.data.dbTrans = dbTrans;
@@ -723,7 +903,7 @@ exports.matchUserPassword = async (req, res, next) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans,
+      dbTrans
     );
   }
 };
@@ -742,7 +922,7 @@ exports.checkUserTotalLogin = async (req, res, next) => {
         res,
         { msgCode: "TOTAL_LOGIN" },
         httpStatus.UNAUTHORIZED,
-        dbTrans,
+        dbTrans
       );
     }
     return next();
@@ -752,7 +932,68 @@ exports.checkUserTotalLogin = async (req, res, next) => {
       req,
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
-      httpStatus.INTERNAL_SERVER_ERROR,
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+exports.checkUserEmailExists = async (req, res, next) => {
+  try {
+    const { auths } = db.models;
+    const { email } = req.body;
+
+    const condition = {
+      email,
+    };
+    const checkUser = await commonService.findByCondition(auths, condition);
+    if (checkUser) {
+      return response.error(
+        req,
+        res,
+        { msgCode: "User already exists with this email" },
+        httpStatus.BAD_REQUEST
+      );
+    }
+
+    req.user = checkUser;
+    return next();
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+exports.checkUserPhoneExists = async (req, res, next) => {
+  try {
+    const { auths } = db.models;
+    const { contact_number } = req.body;
+
+    const checkUser = await commonService.findByCondition(auths, {
+      contact_number,
+    });
+    if (checkUser) {
+      return response.error(
+        req,
+        res,
+        { msgCode: "User already exists with this contact number" },
+        httpStatus.BAD_REQUEST
+      );
+    }
+
+    req.user = checkUser;
+    return next();
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR
     );
   }
 };
