@@ -26,8 +26,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       deletedAt: "deleted_at",
     },
   );
-  Languages.associate = (models) => {
-  };
+  Languages.associate = (models) => {};
 
   return Languages;
 };

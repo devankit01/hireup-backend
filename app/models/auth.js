@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         unique: true,
         allowNull: false,
       },
+      email_verified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      email_verified_at: { type: DataTypes.DATE, allowNull: true },
       contact_number: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -26,7 +32,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      user_id: {
+      user_name: {
         type: DataTypes.STRING,
         allowNull: true,
         unique: true,
@@ -35,17 +41,13 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      organization_name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
       role: {
         type: DataTypes.ENUM(
-          USER_TYPE.CRS,
-          USER_TYPE.SUB_ADMIN,
-          USER_TYPE.SUPER_ADMIN,
+          USER_TYPE.COLLEGE,
+          USER_TYPE.COMPANY,
+          USER_TYPE.RECRUITER,
+          USER_TYPE.STUDENT,
         ),
-        defaultValue: USER_TYPE.CRS,
         allowNull: false,
       },
       status: {
@@ -53,50 +55,12 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
           USER_STATUS.ACTIVE,
           USER_STATUS.DELETED,
           USER_STATUS.IN_ACTIVE,
-        ),
-        defaultValue: USER_STATUS.ACTIVE,
-      },
-      approval: {
-        type: DataTypes.ENUM(
           USER_STATUS.PENDING,
-          USER_STATUS.APPROVED,
-          USER_STATUS.REJECTED,
-          USER_STATUS.IN_COMPLETE,
         ),
-        defaultValue: USER_STATUS.IN_COMPLETE,
-      },
-      login_attempts: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-      },
-      application_number: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      declaration_date: {
-        type: DataTypes.DATE,
-      },
-      total_approved_files: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-      },
-      total_points: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-      },
-      total_audio_files: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
+        defaultValue: USER_STATUS.PENDING,
       },
       pincode: { type: DataTypes.STRING, allowNull: true, default: null },
       address: { type: DataTypes.STRING, allowNull: true, default: null },
-      email_verified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      email_verified_at: { type: DataTypes.DATE, allowNull: true },
-      approved_at: { type: DataTypes.DATE, allowNull: true },
     },
     {
       tableName: "auths",
@@ -108,11 +72,6 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       deletedAt: "deleted_at",
     },
   );
-  Auth.beforeCreate((auth, options) => {
-    if (auth.role === USER_TYPE.SUB_ADMIN) {
-      auth.approval = USER_STATUS.APPROVED;
-    }
-  });
   Auth.associate = (models) => {
     Auth.hasMany(models.sessions, { foreignKey: "auth_id" });
     Auth.belongsTo(models.states, { foreignKey: "state_id" });

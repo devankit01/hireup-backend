@@ -1,7 +1,5 @@
 const db = require("../models/index").sequelize;
-const sequelize = require("sequelize");
 const { Op } = require("sequelize");
-const { BOOLEAN_VAL } = require("../constant/common");
 
 exports.getList = async (
   model,
@@ -10,7 +8,7 @@ exports.getList = async (
   limit,
   offset,
   order,
-  paranoid = true
+  paranoid = true,
 ) => {
   try {
     const list = await model.findAndCountAll({
@@ -46,7 +44,7 @@ exports.getListWithAssociation = async (
   attributes,
   limit,
   offset,
-  order
+  order,
 ) => {
   try {
     const list = await model.findAndCountAll({
@@ -84,7 +82,7 @@ exports.getListWithTransaction = async (
   limit,
   offset,
   order,
-  transaction
+  transaction,
 ) => {
   try {
     const list = await model.findAndCountAll(
@@ -106,7 +104,7 @@ exports.getListWithTransaction = async (
           order,
         }),
       },
-      { transaction }
+      { transaction },
     );
     return list ? JSON.parse(JSON.stringify(list)) : { count: 0, rows: [] };
   } catch (error) {
@@ -141,7 +139,7 @@ exports.getDataList = async (
   sorting,
   attributes,
   limit,
-  offset
+  offset,
 ) => {
   try {
     const list = await model.findAndCountAll({
@@ -159,7 +157,7 @@ exports.getDataList = async (
   } catch (error) {
     console.log(
       "🚀 ~ file: common.js:69 ~ exports.getDataList= ~ error:",
-      error
+      error,
     );
     return false;
   }
@@ -191,7 +189,7 @@ exports.updateData = async (
   condition,
   transaction,
   returning = true,
-  paranoid = true
+  paranoid = true,
 ) => {
   try {
     const result = await model.update(data, {
@@ -204,7 +202,7 @@ exports.updateData = async (
   } catch (error) {
     console.log(
       "🚀 ~ file: common.js:67 ~ exports.updateData= ~ error:",
-      error
+      error,
     );
     return false;
   }
@@ -225,7 +223,7 @@ exports.findByconditionWithAssociation = async (
   condition,
   includeCondition,
   attributes,
-  paranoid = false
+  paranoid = false,
 ) => {
   try {
     const data = await model.findOne({
@@ -267,7 +265,7 @@ exports.deleteQuery = async (model, condition, transaction, force = false) => {
   try {
     const data = await model.destroy(
       { where: condition, force },
-      { transaction }
+      { transaction },
     );
 
     return data ? JSON.parse(JSON.stringify(data)) : {};

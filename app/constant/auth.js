@@ -1,38 +1,33 @@
 const { env } = require("./environment");
 
-const USER_TYPE = {
-  CRS: "crs",
-  SUB_ADMIN: "sub-admin",
-  SUPER_ADMIN: "super-admin",
+exports.USER_TYPE = {
+  STUDENT: "student",
+  RECRUITER: "recruiter",
+  COMPANY: "company",
+  COLLEGE: "college",
 };
 
-const USER_STATUS = {
+exports.USER_STATUS = {
   PENDING: "pending",
   ACTIVE: "active",
   DELETED: "deleted",
-  APPROVED: "approved",
-  REJECTED: "rejected",
   IN_ACTIVE: "in-active",
-  IN_COMPLETE: "in-complete",
 };
 
-const JWT_ERROR = {
+exports.JWT_ERROR = {
   EXPIRED: "jwt expired",
   INVALID: "invalid signature",
 };
 
-const DEFAULT_VALUE_LIST = {
+exports.DEFAULT_VALUE_LIST = {
   DEVICE: "web",
   MIN: 1,
   MAX: 10,
   SORT: "created_at",
   RECOMMENDED_VIDEO: 5,
-  /*
-  Please define here other constant related to default value
-  */
 };
 
-const PASSWORD = {
+exports.PASSWORD = {
   REGEXP:
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
   MSG: "Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character",
@@ -40,25 +35,25 @@ const PASSWORD = {
   MAXCHAR: 20,
 };
 
-const OTP = {
+exports.OTP = {
   MSG: `Otp should be of ${env.OTP_DIGIT} digits`,
   LENGTH: +env.OTP_DIGIT,
 };
 
-const ID = {
+exports.ID = {
   LENGTH: 36,
   VERSION: "uuidv4",
 };
 
-const PHONE = {
+exports.PHONE = {
   LENGTH: 10,
   REGEXP: /^\d{10}$/,
 };
 
 // Please define domain according to project
-const ALLOWED_DOMAINS = ["com", "net", "in", "co"];
+exports.ALLOWED_DOMAINS = ["com", "net", "in", "co"];
 
-const DATA_SET = {
+exports.DATA_SET = {
   states: [
     {
       state: "Andhra Pradesh",
@@ -961,45 +956,4 @@ const DATA_SET = {
     "Santali",
     "Sindhi",
   ],
-  formats: [
-    "Drama",
-    "Podcast",
-    "Live broadcast",
-    "Skit",
-    "Radio Documentary",
-    "Discussion",
-    "Other",
-  ],
-  themes: [
-    "Youth",
-    "Women",
-    "Employment",
-    "Agriculture",
-    "Health",
-    "Education",
-    "Kids",
-    "Social Welfare",
-    "Community Development",
-    "Cultural",
-    "Other",
-  ],
-};
-
-const DOWNLOAD_STATUS = {
-  DOWNLOAD: "download",
-  UPLOAD: "upload",
-};
-
-module.exports = {
-  USER_TYPE,
-  USER_STATUS,
-  JWT_ERROR,
-  PASSWORD,
-  DEFAULT_VALUE_LIST,
-  OTP,
-  ID,
-  PHONE,
-  ALLOWED_DOMAINS,
-  DATA_SET,
-  DOWNLOAD_STATUS,
 };
