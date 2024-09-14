@@ -98,6 +98,7 @@ exports.studentSignUp = async (req, res, next) => {
 
     const createdUser = await commonService.createUser(userData);
     const userDetails = createdUser.toJSON();
+
     userDetails.token = authJwt.generateAuthJwt({
       id: userDetails.id,
       user_id: userDetails.user_id,
@@ -143,6 +144,7 @@ exports.collegeSignUp = async (req, res, next) => {
 
     const createdCollege = await commonService.createUser(collegeData);
     const collegeDetails = createdCollege.toJSON();
+
     collegeDetails.token = authJwt.generateAuthJwt({
       id: collegeDetails.id,
       user_id: collegeDetails.user_id,
@@ -188,6 +190,7 @@ exports.companySignUp = async (req, res, next) => {
 
     const createdCompany = await commonService.createUser(companyData);
     const companyDetails = createdCompany.toJSON();
+
     companyDetails.token = authJwt.generateAuthJwt({
       id: companyDetails.id,
       user_id: companyDetails.user_id,
@@ -233,6 +236,7 @@ exports.recruiterSignUp = async (req, res, next) => {
 
     const createdRecruiter = await commonService.createUser(recruiterData);
     const recruiterDetails = createdRecruiter.toJSON();
+
     recruiterDetails.token = authJwt.generateAuthJwt({
       id: recruiterDetails.id,
       user_id: recruiterDetails.user_id,
