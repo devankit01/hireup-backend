@@ -180,3 +180,61 @@ exports.getActiveCompanyList = async (req, res) => {
     );
   }
 };
+
+exports.checkEmailExist = async (req, res) => {
+  try {
+    const { email } = req.query;
+    const { auths } = db.models;
+
+    const condition = { email };
+
+    const checkEmail = await commonService.findByCondition(auths, condition);
+
+    const msgCode = checkEmail ? "Email in use." : "Email available.";
+
+    return response.success(
+      req,
+      res,
+      { msgCode, data: { available: !checkEmail } },
+      httpStatus.OK
+    );
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+exports.checkPhoneExist = async (req, res) => {
+  try {
+    const { contact_number } = req.query;
+    const { auths } = db.models;
+
+    const condition = { contact_number };
+
+    const checkPhone = await commonService.findByCondition(auths, condition);
+
+    const msgCode = checkPhone
+      ? "Contact number in use."
+      : "Contact number available.";
+
+    return response.success(
+      req,
+      res,
+      { msgCode, data: { available: !checkPhone } },
+      httpStatus.OK
+    );
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
