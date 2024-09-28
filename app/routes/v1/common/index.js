@@ -18,4 +18,16 @@ routes.get("/college", controller.getActiveCollegeList);
 
 routes.get("/company", controller.getActiveCompanyList);
 
+routes.get(
+  "/email/exist",
+  reqValidator(schema.emailExists, 'query'),
+  controller.checkEmailExist
+);
+
+routes.get(
+  "/phone/exist",
+  reqValidator(schema.phoneExists, 'query'),
+  controller.checkPhoneExist
+);
+
 module.exports = routes;

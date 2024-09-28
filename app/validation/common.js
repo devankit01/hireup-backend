@@ -57,3 +57,11 @@ exports.contactUs = Joi.object({
   contact_number: Joi.string().length(10).trim().required(),
   country_code: Joi.string().trim().default("+91"),
 });
+
+exports.emailExists = Joi.object({
+  email: Joi.string().trim().lowercase().required(),
+});
+
+exports.phoneExists = Joi.object({
+  contact_number: Joi.string().length(10).trim().required(),
+});
