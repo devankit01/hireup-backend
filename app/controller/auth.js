@@ -93,25 +93,37 @@ exports.login = async (req, res, next) => {
 exports.studentSignUp = async (req, res, next) => {
   const dbTrans = await db.transaction();
   try {
-    const userData = { ...req.body, role: USER_TYPE.STUDENT };
-    userData.password = await passwordHash.generateHash(userData.password);
+    req.body.password = await passwordHash.generateHash(req.body.password);
+    req.body.role = USER_TYPE.STUDENT;
+    const authObject = ({ email, password, contact_number, password } =
+      req.body);
+    const authDetails = await commonService.create(db.models.auths, authObject);
+    req.body.auth_id = authDetails.toJSON().id;
 
-    const createdUser = await commonService.createUser(userData);
-    const userDetails = createdUser.toJSON();
+    const createdStudent = await commonService.create(
+      db.models.students,
+      req.body
+    );
+    const studentDetails = createdStudent.toJSON();
 
-    userDetails.token = authJwt.generateAuthJwt({
-      id: userDetails.id,
-      user_id: userDetails.user_id,
-      role: userDetails.role,
-      email: userDetails.email,
-      device_id: userDetails.device_id,
-      approval: userDetails.approval,
-      status: userDetails.status,
+    studentDetails.token = authJwt.generateAuthJwt({
+      id: studentDetails.id,
+      user_id: studentDetails.user_id,
+      role: studentDetails.role,
+      email: studentDetails.email,
+      device_id: studentDetails.device_id,
+      approval: studentDetails.approval,
+      status: studentDetails.status,
       expires_in: env.TOKEN_EXPIRES_IN,
     });
 
+    await this.insertSessionData(
+      req.body,
+      studentDetails.token,
+      authDetails.toJSON().id
+    );
     const responseData = {
-      data: authMapper.studentSignUpMapper(userDetails),
+      data: authMapper.studentSignUpMapper(studentDetails),
       msgCode: messages.SIGNUP_SUCCESSFUL,
     };
 
@@ -137,12 +149,16 @@ exports.studentSignUp = async (req, res, next) => {
 exports.collegeSignUp = async (req, res, next) => {
   const dbTrans = await db.transaction();
   try {
-    const collegeData = { ...req.body, role: USER_TYPE.COLLEGE };
-    collegeData.password = await passwordHash.generateHash(
-      collegeData.password
+    req.body.password = await passwordHash.generateHash(req.body.password);
+    req.body.role = USER_TYPE.COLLEGE;
+    const authObject = ({ email, password, contact_number, password } =
+      req.body);
+    const authDetails = await commonService.create(db.models.auths, authObject);
+    req.body.auth_id = authDetails.toJSON().id;
+    const createdCollege = await commonService.create(
+      db.models.colleges,
+      req.body
     );
-
-    const createdCollege = await commonService.createUser(collegeData);
     const collegeDetails = createdCollege.toJSON();
 
     collegeDetails.token = authJwt.generateAuthJwt({
@@ -156,6 +172,11 @@ exports.collegeSignUp = async (req, res, next) => {
       expires_in: env.TOKEN_EXPIRES_IN,
     });
 
+    await this.insertSessionData(
+      req.body,
+      collegeDetails.token,
+      authDetails.toJSON().id
+    );
     const responseData = {
       data: authMapper.collegeSignUpMapper(collegeDetails),
       msgCode: messages.SIGNUP_SUCCESSFUL,
@@ -183,12 +204,15 @@ exports.collegeSignUp = async (req, res, next) => {
 exports.companySignUp = async (req, res, next) => {
   const dbTrans = await db.transaction();
   try {
-    const companyData = { ...req.body, role: USER_TYPE.COLLEGE };
-    companyData.password = await passwordHash.generateHash(
-      companyData.password
+    req.body.role = USER_TYPE.COMPANY;
+    const authObject = ({ email, password, contact_number, password } =
+      req.body);
+    const authDetails = await commonService.create(db.models.auths, authObject);
+    req.body.auth_id = authDetails.toJSON().id;
+    const createdCompany = await commonService.create(
+      db.models.companies,
+      req.body
     );
-
-    const createdCompany = await commonService.createUser(companyData);
     const companyDetails = createdCompany.toJSON();
 
     companyDetails.token = authJwt.generateAuthJwt({
@@ -202,6 +226,11 @@ exports.companySignUp = async (req, res, next) => {
       expires_in: env.TOKEN_EXPIRES_IN,
     });
 
+    await this.insertSessionData(
+      req.body,
+      companyDetails.token,
+      authDetails.toJSON().id
+    );
     const responseData = {
       data: authMapper.companySignUpMapper(companyDetails),
       msgCode: messages.SIGNUP_SUCCESSFUL,
@@ -958,8 +987,6 @@ exports.checkUserEmailExists = async (req, res, next) => {
         httpStatus.BAD_REQUEST
       );
     }
-
-    req.user = checkUser;
     return next();
   } catch (error) {
     console.log(error);
@@ -988,8 +1015,128 @@ exports.checkUserPhoneExists = async (req, res, next) => {
         httpStatus.BAD_REQUEST
       );
     }
+    return next();
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
 
-    req.user = checkUser;
+exports.checkCollegeExists = async (req, res, next) => {
+  try {
+    const { colleges } = db.models;
+    const { college_id } = req.body;
+
+    const condition = {
+      id: college_id,
+    };
+    const collegeDetails = await commonService.findByCondition(
+      colleges,
+      condition
+    );
+    if (!collegeDetails) {
+      return response.error(
+        req,
+        res,
+        { msgCode: "Given college does not exists" },
+        httpStatus.BAD_REQUEST
+      );
+    }
+
+    req.college = collegeDetails;
+    return next();
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+exports.insertSessionData = async (requestBody, token, authId) => {
+  const dbTrans = await db.transaction();
+  try {
+    const sessionData = {
+      auth_id: authId,
+      jwt_token: token,
+      device_id: requestBody.device_id,
+      device_token: requestBody.device_token,
+      device_type: requestBody.device_type,
+    };
+
+    return await commonService.create(db.models.sessions, sessionData);
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR,
+      dbTrans
+    );
+  }
+};
+
+exports.checkDistrictExists = async (req, res, next) => {
+  try {
+    const { districts } = db.models;
+    const { district_id } = req.body;
+
+    const condition = {
+      id: district_id,
+    };
+    const districtDetails = await commonService.findByCondition(
+      districts,
+      condition
+    );
+    if (!districtDetails) {
+      return response.error(
+        req,
+        res,
+        { msgCode: "District does not exists" },
+        httpStatus.BAD_REQUEST
+      );
+    }
+
+    req.district = districtDetails;
+    return next();
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+exports.checkStateExists = async (req, res, next) => {
+  try {
+    const { states } = db.models;
+    const { state_id } = req.body;
+
+    const condition = {
+      id: state_id,
+    };
+    const stateDetails = await commonService.findByCondition(states, condition);
+    if (!stateDetails) {
+      return response.error(
+        req,
+        res,
+        { msgCode: "State does not exists" },
+        httpStatus.BAD_REQUEST
+      );
+    }
+    req.state = stateDetails;
     return next();
   } catch (error) {
     console.log(error);

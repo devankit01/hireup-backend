@@ -13,6 +13,7 @@ routes.post(
   reqValidator(schema.studentSignUp),
   controller.checkUserEmailExists,
   controller.checkUserPhoneExists,
+  controller.checkCollegeExists,
   controller.studentSignUp
 );
 
@@ -21,6 +22,8 @@ routes.post(
   reqValidator(schema.collegeSignUp),
   controller.checkUserPhoneExists,
   controller.checkUserEmailExists,
+  controller.checkStateExists,
+  controller.checkDistrictExists,
   controller.collegeSignUp
 );
 
@@ -32,13 +35,13 @@ routes.post(
   controller.companySignUp
 );
 
-routes.post(
-  "/recruiter/signup",
-  reqValidator(schema.recruiterSignUp),
-  controller.checkUserPhoneExists,
-  controller.checkUserEmailExists,
-  controller.recruiterSignUp
-);
+// routes.post(
+//   "/recruiter/signup",
+//   reqValidator(schema.recruiterSignUp),
+//   controller.checkUserPhoneExists,
+//   controller.checkUserEmailExists,
+//   controller.recruiterSignUp
+// );
 
 routes.post(
   "/login",

@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       refresh_token: {
         type: DataTypes.STRING(500),
       },
+      auth_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
     },
     {
       tableName: "sessions",
@@ -32,11 +36,11 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       createdAt: "created_at",
       updatedAt: "updated_at",
       deletedAt: "deleted_at",
-    },
+    }
   );
 
   Session.associate = (models) => {
-    Session.belongsTo(models.auths, { foreignKey: "auth_id" });
+    Session.belongsTo(models.auths, { foreignKey: "id" });
   };
 
   return Session;

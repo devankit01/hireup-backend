@@ -1,8 +1,8 @@
-const { USER_TYPE, USER_STATUS } = require("../constant/auth");
+const { USER_STATUS } = require("../constant/auth");
 
 module.exports = (sequelize, DataTypes, UUIDV4) => {
-  const Auth = sequelize.define(
-    "auths",
+  const Student = sequelize.define(
+    "students",
     {
       id: {
         type: DataTypes.UUID,
@@ -19,22 +19,29 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         defaultValue: false,
         allowNull: false,
       },
-      email_verified_at: { type: DataTypes.DATE, allowNull: true },
       contact_number: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      password: {
+      country_code: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      roll_number: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      role: {
-        type: DataTypes.ENUM(
-          USER_TYPE.COLLEGE,
-          USER_TYPE.COMPANY,
-          USER_TYPE.RECRUITER,
-          USER_TYPE.STUDENT
-        ),
+      college_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      auth_id: {
+        type: DataTypes.UUID,
         allowNull: false,
       },
       status: {
@@ -48,7 +55,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       },
     },
     {
-      tableName: "auths",
+      tableName: "students",
       timestamps: true,
       paranoid: true,
       freezeTableName: true,
@@ -57,11 +64,9 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       deletedAt: "deleted_at",
     }
   );
-  Auth.associate = (models) => {
-    Auth.hasMany(models.sessions, { foreignKey: "auth_id" });
-    Auth.hasOne(models.colleges, { foreignKey: "auth_id" });
-    Auth.hasOne(models.companies, { foreignKey: "auth_id" });
-    Auth.hasOne(models.students, { foreignKey: "auth_id" });
+  Student.associate = (models) => {
+    Student.belongsTo(models.colleges, { foreignKey: "college_id" });
+    Student.belongsTo(models.auths, { foreignKey: "id" });
   };
-  return Auth;
+  return Student;
 };

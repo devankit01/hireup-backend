@@ -334,10 +334,9 @@ exports.checkUserDetails = async (user_id, email, contact_number) => {
   }
 };
 
-exports.createUser = async (userDetails) => {
+exports.create = async (db, data) => {
   try {
-    const { auths } = db.models;
-    return auths.create(userDetails);
+    return db.create(data);
   } catch (error) {
     console.log(error);
     return false;

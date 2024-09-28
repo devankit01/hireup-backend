@@ -6,10 +6,8 @@ exports.studentSignUpMapper = (data) => {
     name: data.name,
     rollNumber: data.roll_number,
     contact_number: data.contact_number,
-    college_name: data.college_name,
     email: data.email,
-    role: data.role,
-    user_name: data.user_name,
+    name: data.name,
     token: data.token,
   };
 };
@@ -22,8 +20,7 @@ exports.collegeSignUpMapper = (data) => {
     contact_number: data.contact_number,
     college_name: data.college_name,
     email: data.email,
-    role: data.role,
-    user_name: data.user_name,
+    name: data.name,
     token: data.token,
   };
 };
@@ -36,8 +33,7 @@ exports.companySignUpMapper = (data) => {
     contact_number: data.contact_number,
     company_name: data.company_name,
     email: data.email,
-    role: data.role,
-    user_name: data.user_name,
+    name: data.name,
     token: data.token,
   };
 };
