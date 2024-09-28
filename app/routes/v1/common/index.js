@@ -14,4 +14,8 @@ routes.post(
   controller.addContactUs
 );
 
+routes.get("/college", controller.getActiveCollegeList);
+
+routes.get("/company", controller.getActiveCompanyList);
+
 module.exports = routes;
