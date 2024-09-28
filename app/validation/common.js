@@ -49,3 +49,11 @@ exports.email = Joi.string()
 exports.updateProfile = Joi.object({
   name: Joi.string().trim().min(3).max(500),
 }).min(1);
+
+exports.contactUs = Joi.object({
+  email: Joi.string().trim().lowercase().required(),
+  description: Joi.string().trim().required(),
+  name: Joi.string().trim().required(),
+  contact_number: Joi.string().length(10).trim().required(),
+  country_code: Joi.string().trim().default("+91"),
+});

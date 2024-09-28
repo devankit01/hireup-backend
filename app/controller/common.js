@@ -42,8 +42,49 @@ exports.getMasterList = async (req, res) => {
     return response.error(
       req,
       res,
-      { msgCode: responseMsg.INTERNAL_SERVER_ERROR },
+      { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+exports.addContactUs = async (req, res) => {
+  const dbTrans = await db.transaction();
+  try {
+    const contactUsDetails = req.body;
+    const { contact_us } = db.models;
+
+    const createContactUs = await commonService.addDetail(
+      contact_us,
+      contactUsDetails,
+      dbTrans
+    );
+
+    if (!createContactUs) {
+      return response.error(
+        req,
+        res,
+        { msgCode: "INTERNAL_SERVER_ERROR" },
+        httpStatus.INTERNAL_SERVER_ERROR,
+        dbTrans
+      );
+    }
+
+    return response.success(
+      req,
+      res,
+      { msgCode: "Contact us sent successfully." },
+      httpStatus.OK,
+      dbTrans
+    );
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR,
+      dbTrans
     );
   }
 };

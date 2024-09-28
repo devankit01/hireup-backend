@@ -27,7 +27,7 @@ exports.success = async (req, res, result, code, dbTrans) => {
           : lngMsg["en"][result.msgCode]) ||
         result.msgCode ||
         httpStatus[code],
-      result: result.data ? result.data : "",
+      result: result.data ? result.data : {},
       time: Date.now(),
     };
     if (dbTrans !== undefined) {
