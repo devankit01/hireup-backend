@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       createdAt: "created_at",
       updatedAt: "updated_at",
       deletedAt: "deleted_at",
-    }
+    },
   );
   Student.associate = (models) => {
     Student.belongsTo(models.colleges, { foreignKey: "college_id" });

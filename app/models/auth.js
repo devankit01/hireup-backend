@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
           USER_TYPE.COLLEGE,
           USER_TYPE.COMPANY,
           USER_TYPE.RECRUITER,
-          USER_TYPE.STUDENT
+          USER_TYPE.STUDENT,
         ),
         allowNull: false,
       },
@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
           USER_STATUS.ACTIVE,
           USER_STATUS.DELETED,
           USER_STATUS.IN_ACTIVE,
-          USER_STATUS.PENDING
+          USER_STATUS.PENDING,
         ),
         defaultValue: USER_STATUS.PENDING,
       },
@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       createdAt: "created_at",
       updatedAt: "updated_at",
       deletedAt: "deleted_at",
-    }
+    },
   );
   Auth.associate = (models) => {
     Auth.hasMany(models.sessions, { foreignKey: "auth_id" });

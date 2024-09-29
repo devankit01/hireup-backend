@@ -14,7 +14,7 @@ routes.post(
   controller.checkUserEmailExists,
   controller.checkUserPhoneExists,
   controller.checkCollegeExists,
-  controller.studentSignUp
+  controller.studentSignUp,
 );
 
 routes.post(
@@ -24,7 +24,7 @@ routes.post(
   controller.checkUserEmailExists,
   controller.checkStateExists,
   controller.checkDistrictExists,
-  controller.collegeSignUp
+  controller.collegeSignUp,
 );
 
 routes.post(
@@ -32,7 +32,7 @@ routes.post(
   reqValidator(schema.companySignUp),
   controller.checkUserPhoneExists,
   controller.checkUserEmailExists,
-  controller.companySignUp
+  controller.companySignUp,
 );
 
 routes.post(
@@ -41,7 +41,7 @@ routes.post(
   controller.checkUserPhoneExists,
   controller.checkUserEmailExists,
   controller.checkCompanyExists,
-  controller.recruiterSignUp
+  controller.recruiterSignUp,
 );
 
 routes.post(
@@ -50,35 +50,35 @@ routes.post(
   controller.matchUserPassword,
   controller.checkUserTotalLogin,
   controller.login,
-  controller.createSession
+  controller.createSession,
 );
 routes.get("/token", verifyRefreshAuthToken, controller.getAccessToken);
 
 routes.post(
   "/forgot-password",
   reqValidator(schema.forgotPassword),
-  controller.forgotPassword
+  controller.forgotPassword,
 );
 
 routes.post(
   "/resend-otp",
   verifyToken,
   reqValidator(schema.forgotPassword),
-  controller.resendOtp
+  controller.resendOtp,
 );
 
 routes.post(
   "/change-password",
   verifyToken,
   reqValidator(schema.changePassword),
-  controller.changePassword
+  controller.changePassword,
 );
 
 routes.post(
   "/verify-otp",
   verifyToken,
   reqValidator(schema.verifyOtp),
-  controller.verifyOtp
+  controller.verifyOtp,
 );
 
 routes.post("/reset-password", verifyToken, controller.resetPassword);

@@ -35,7 +35,7 @@ exports.getMasterList = async (req, res) => {
       [[sort, sortOrder]],
       attributes,
       limit,
-      offset
+      offset,
     );
     const msgCode =
       list.count !== 0 ? "Master list fetched." : "No record fetched.";
@@ -47,7 +47,7 @@ exports.getMasterList = async (req, res) => {
       req,
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
-      httpStatus.INTERNAL_SERVER_ERROR
+      httpStatus.INTERNAL_SERVER_ERROR,
     );
   }
 };
@@ -61,7 +61,7 @@ exports.addContactUs = async (req, res) => {
     const createContactUs = await commonService.addDetail(
       contact_us,
       contactUsDetails,
-      dbTrans
+      dbTrans,
     );
 
     if (!createContactUs) {
@@ -70,7 +70,7 @@ exports.addContactUs = async (req, res) => {
         res,
         { msgCode: "INTERNAL_SERVER_ERROR" },
         httpStatus.INTERNAL_SERVER_ERROR,
-        dbTrans
+        dbTrans,
       );
     }
 
@@ -79,7 +79,7 @@ exports.addContactUs = async (req, res) => {
       res,
       { msgCode: "Contact us sent successfully." },
       httpStatus.OK,
-      dbTrans
+      dbTrans,
     );
   } catch (error) {
     console.log(error);
@@ -88,7 +88,7 @@ exports.addContactUs = async (req, res) => {
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
       httpStatus.INTERNAL_SERVER_ERROR,
-      dbTrans
+      dbTrans,
     );
   }
 };
@@ -120,7 +120,7 @@ exports.getActiveCollegeList = async (req, res) => {
       attributes,
       limit,
       offset,
-      [[sort, sortOrder]]
+      [[sort, sortOrder]],
     );
     const msgCode =
       list.count !== 0 ? "College list fetched." : "No record fetched.";
@@ -132,7 +132,7 @@ exports.getActiveCollegeList = async (req, res) => {
       req,
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
-      httpStatus.INTERNAL_SERVER_ERROR
+      httpStatus.INTERNAL_SERVER_ERROR,
     );
   }
 };
@@ -164,7 +164,7 @@ exports.getActiveCompanyList = async (req, res) => {
       attributes,
       limit,
       offset,
-      [[sort, sortOrder]]
+      [[sort, sortOrder]],
     );
     const msgCode =
       list.count !== 0 ? "Company list fetched." : "No record fetched.";
@@ -176,7 +176,7 @@ exports.getActiveCompanyList = async (req, res) => {
       req,
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
-      httpStatus.INTERNAL_SERVER_ERROR
+      httpStatus.INTERNAL_SERVER_ERROR,
     );
   }
 };
@@ -196,7 +196,7 @@ exports.checkEmailExist = async (req, res) => {
       req,
       res,
       { msgCode, data: { available: !checkEmail } },
-      httpStatus.OK
+      httpStatus.OK,
     );
   } catch (error) {
     console.log(error);
@@ -204,7 +204,7 @@ exports.checkEmailExist = async (req, res) => {
       req,
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
-      httpStatus.INTERNAL_SERVER_ERROR
+      httpStatus.INTERNAL_SERVER_ERROR,
     );
   }
 };
@@ -226,7 +226,7 @@ exports.checkPhoneExist = async (req, res) => {
       req,
       res,
       { msgCode, data: { available: !checkPhone } },
-      httpStatus.OK
+      httpStatus.OK,
     );
   } catch (error) {
     console.log(error);
@@ -234,7 +234,7 @@ exports.checkPhoneExist = async (req, res) => {
       req,
       res,
       { msgCode: "INTERNAL_SERVER_ERROR" },
-      httpStatus.INTERNAL_SERVER_ERROR
+      httpStatus.INTERNAL_SERVER_ERROR,
     );
   }
 };

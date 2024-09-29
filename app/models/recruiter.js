@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       createdAt: "created_at",
       updatedAt: "updated_at",
       deletedAt: "deleted_at",
-    }
+    },
   );
   Recruiter.associate = (models) => {
     Recruiter.belongsTo(models.companies, { foreignKey: "company_id" });

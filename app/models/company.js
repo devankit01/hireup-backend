@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         type: DataTypes.ENUM(
           COMPANY_TYPE.STARTUP,
           COMPANY_TYPE.MIDSIZE,
-          COMPANY_TYPE.MNC
+          COMPANY_TYPE.MNC,
         ),
         allowNull: false,
       },
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       createdAt: "created_at",
       updatedAt: "updated_at",
       deletedAt: "deleted_at",
-    }
+    },
   );
   Company.associate = (models) => {
     Company.hasMany(models.companies, { foreignKey: "company_id" });

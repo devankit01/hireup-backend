@@ -11,7 +11,7 @@ routes.get("/district", controller.getMasterList);
 routes.post(
   "/contact-us",
   reqValidator(schema.contactUs),
-  controller.addContactUs
+  controller.addContactUs,
 );
 
 routes.get("/college", controller.getActiveCollegeList);
@@ -20,14 +20,14 @@ routes.get("/company", controller.getActiveCompanyList);
 
 routes.get(
   "/email/exist",
-  reqValidator(schema.emailExists, 'query'),
-  controller.checkEmailExist
+  reqValidator(schema.emailExists, "query"),
+  controller.checkEmailExist,
 );
 
 routes.get(
   "/phone/exist",
-  reqValidator(schema.phoneExists, 'query'),
-  controller.checkPhoneExist
+  reqValidator(schema.phoneExists, "query"),
+  controller.checkPhoneExist,
 );
 
 module.exports = routes;
