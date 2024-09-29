@@ -7,6 +7,12 @@ exports.USER_TYPE = {
   COLLEGE: "college",
 };
 
+exports.COMPANY_TYPE = {
+  STARTUP: "startup",
+  MIDSIZE: "midsize",
+  MNC: "mnc",
+};
+
 exports.USER_STATUS = {
   PENDING: "pending",
   ACTIVE: "active",

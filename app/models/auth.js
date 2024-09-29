@@ -9,10 +9,6 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         primaryKey: true,
         defaultValue: UUIDV4,
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
       email: {
         type: DataTypes.STRING,
         unique: true,
@@ -26,27 +22,18 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       email_verified_at: { type: DataTypes.DATE, allowNull: true },
       contact_number: {
         type: DataTypes.STRING,
-        allowNull: true,
-      },
-      country_code: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      user_name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        unique: true,
+        allowNull: false,
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       role: {
         type: DataTypes.ENUM(
           USER_TYPE.COLLEGE,
           USER_TYPE.COMPANY,
           USER_TYPE.RECRUITER,
-          USER_TYPE.STUDENT,
+          USER_TYPE.STUDENT
         ),
         allowNull: false,
       },
@@ -55,12 +42,10 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
           USER_STATUS.ACTIVE,
           USER_STATUS.DELETED,
           USER_STATUS.IN_ACTIVE,
-          USER_STATUS.PENDING,
+          USER_STATUS.PENDING
         ),
         defaultValue: USER_STATUS.PENDING,
       },
-      pincode: { type: DataTypes.STRING, allowNull: true, default: null },
-      address: { type: DataTypes.STRING, allowNull: true, default: null },
     },
     {
       tableName: "auths",
@@ -70,12 +55,13 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       createdAt: "created_at",
       updatedAt: "updated_at",
       deletedAt: "deleted_at",
-    },
+    }
   );
   Auth.associate = (models) => {
     Auth.hasMany(models.sessions, { foreignKey: "auth_id" });
-    Auth.belongsTo(models.states, { foreignKey: "state_id" });
-    Auth.belongsTo(models.districts, { foreignKey: "district_id" });
+    Auth.hasOne(models.colleges, { foreignKey: "auth_id" });
+    Auth.hasOne(models.companies, { foreignKey: "auth_id" });
+    Auth.hasOne(models.students, { foreignKey: "auth_id" });
   };
   return Auth;
 };

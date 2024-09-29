@@ -36,7 +36,7 @@ sequelize
   });
 
 sequelize
-  .sync({ force: false, alter: false, logging: false })
+  .sync({ force: false, alter: true, logging: false })
   .then(() => {
     console.log(`DB_NAME: ${env.DB_NAME} & tables created!`);
   })
