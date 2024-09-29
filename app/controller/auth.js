@@ -95,7 +95,7 @@ exports.studentSignUp = async (req, res, next) => {
   try {
     req.body.password = await passwordHash.generateHash(req.body.password);
     req.body.role = USER_TYPE.STUDENT;
-    const authObject = ({ email, password, contact_number, password } =
+    const authObject = ({ email, password, contact_number, password, role } =
       req.body);
     const authDetails = await commonService.create(db.models.auths, authObject);
     req.body.auth_id = authDetails.toJSON().id;
@@ -107,13 +107,9 @@ exports.studentSignUp = async (req, res, next) => {
     const studentDetails = createdStudent.toJSON();
 
     studentDetails.token = authJwt.generateAuthJwt({
-      id: studentDetails.id,
+      auth_id: authDetails.toJSON().id,
       user_id: studentDetails.user_id,
-      role: studentDetails.role,
-      email: studentDetails.email,
-      device_id: studentDetails.device_id,
-      approval: studentDetails.approval,
-      status: studentDetails.status,
+      role: authDetails.toJSON().role,
       expires_in: env.TOKEN_EXPIRES_IN,
     });
 
@@ -151,7 +147,7 @@ exports.collegeSignUp = async (req, res, next) => {
   try {
     req.body.password = await passwordHash.generateHash(req.body.password);
     req.body.role = USER_TYPE.COLLEGE;
-    const authObject = ({ email, password, contact_number, password } =
+    const authObject = ({ email, password, contact_number, password, role } =
       req.body);
     const authDetails = await commonService.create(db.models.auths, authObject);
     req.body.auth_id = authDetails.toJSON().id;
@@ -162,13 +158,9 @@ exports.collegeSignUp = async (req, res, next) => {
     const collegeDetails = createdCollege.toJSON();
 
     collegeDetails.token = authJwt.generateAuthJwt({
-      id: collegeDetails.id,
+      auth_id: authDetails.toJSON().id,
       user_id: collegeDetails.user_id,
-      role: collegeDetails.role,
-      email: collegeDetails.email,
-      device_id: collegeDetails.device_id,
-      approval: collegeDetails.approval,
-      status: collegeDetails.status,
+      role: authDetails.toJSON().role,
       expires_in: env.TOKEN_EXPIRES_IN,
     });
 
@@ -205,7 +197,8 @@ exports.companySignUp = async (req, res, next) => {
   const dbTrans = await db.transaction();
   try {
     req.body.role = USER_TYPE.COMPANY;
-    const authObject = ({ email, password, contact_number, password } =
+    req.body.password = await passwordHash.generateHash(req.body.password);
+    const authObject = ({ email, password, contact_number, password, role } =
       req.body);
     const authDetails = await commonService.create(db.models.auths, authObject);
     req.body.auth_id = authDetails.toJSON().id;
@@ -216,13 +209,10 @@ exports.companySignUp = async (req, res, next) => {
     const companyDetails = createdCompany.toJSON();
 
     companyDetails.token = authJwt.generateAuthJwt({
-      id: companyDetails.id,
-      user_id: companyDetails.user_id,
-      role: companyDetails.role,
-      email: companyDetails.email,
-      device_id: companyDetails.device_id,
-      approval: companyDetails.approval,
-      status: companyDetails.status,
+      auth_id: authDetails.toJSON().id,
+      user_id: companyDetails.id,
+      role: authDetails.toJSON().role,
+      email: authDetails.toJSON().email,
       expires_in: env.TOKEN_EXPIRES_IN,
     });
 
@@ -258,24 +248,30 @@ exports.companySignUp = async (req, res, next) => {
 exports.recruiterSignUp = async (req, res, next) => {
   const dbTrans = await db.transaction();
   try {
-    const recruiterData = { ...req.body, role: USER_TYPE.RECRUITER };
-    recruiterData.password = await passwordHash.generateHash(
-      recruiterData.password
+    req.body.role = USER_TYPE.RECRUITER;
+    req.body.password = await passwordHash.generateHash(req.body.password);
+    const authObject = ({ email, password, contact_number, password, role } =
+      req.body);
+    const authDetails = await commonService.create(db.models.auths, authObject);
+    req.body.auth_id = authDetails.toJSON().id;
+    const createdRecruiter = await commonService.create(
+      db.models.recruiters,
+      req.body
     );
-
-    const createdRecruiter = await commonService.createUser(recruiterData);
     const recruiterDetails = createdRecruiter.toJSON();
 
     recruiterDetails.token = authJwt.generateAuthJwt({
-      id: recruiterDetails.id,
-      user_id: recruiterDetails.user_id,
-      role: recruiterDetails.role,
-      email: recruiterDetails.email,
-      device_id: recruiterDetails.device_id,
-      approval: recruiterDetails.approval,
-      status: recruiterDetails.status,
+      auth_id: authDetails.toJSON().id,
+      user_id: recruiterDetails.id,
+      role: authDetails.toJSON().role,
       expires_in: env.TOKEN_EXPIRES_IN,
     });
+
+    await this.insertSessionData(
+      req.body,
+      recruiterDetails.token,
+      authDetails.toJSON().id
+    );
 
     const responseData = {
       data: authMapper.recruiterSignUpMapper(recruiterDetails),
@@ -1061,6 +1057,40 @@ exports.checkCollegeExists = async (req, res, next) => {
   }
 };
 
+exports.checkCompanyExists = async (req, res, next) => {
+  try {
+    const { companies } = db.models;
+    const { company_id } = req.body;
+
+    const condition = {
+      id: company_id,
+    };
+    const companyDetails = await commonService.findByCondition(
+      companies,
+      condition
+    );
+    if (!companyDetails) {
+      return response.error(
+        req,
+        res,
+        { msgCode: "Given company does not exists" },
+        httpStatus.BAD_REQUEST
+      );
+    }
+
+    req.company = companyDetails;
+    return next();
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
 exports.insertSessionData = async (requestBody, token, authId) => {
   const dbTrans = await db.transaction();
   try {
@@ -1138,6 +1168,53 @@ exports.checkStateExists = async (req, res, next) => {
     }
     req.state = stateDetails;
     return next();
+  } catch (error) {
+    console.log(error);
+    return response.error(
+      req,
+      res,
+      { msgCode: "INTERNAL_SERVER_ERROR" },
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+exports.changePassword = async (req, res, next) => {
+  const dbTrans = await await db.transaction();
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const { auth_id } = req.token;
+    console.log(req.token);
+    const authDetails = await commonService.findByCondition(db.models.auths, {
+      id: auth_id,
+    });
+    const isCorrectPassword = passwordHash.comparePassword(
+      oldPassword,
+      authDetails.password
+    );
+
+    if (!isCorrectPassword) {
+      return response.error(
+        req,
+        res,
+        { msgCode: "Old password is not correct" },
+        httpStatus.BAD_REQUEST
+      );
+    }
+    const password = await passwordHash.generateHash(newPassword);
+    await commonService.updateData(
+      db.models.auths,
+      { password },
+      { id: auth_id }
+    );
+
+    return response.success(
+      req,
+      res,
+      { msgCode: "Password changed successfully" },
+      httpStatus.OK,
+      dbTrans
+    );
   } catch (error) {
     console.log(error);
     return response.error(

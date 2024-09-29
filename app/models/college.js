@@ -1,5 +1,3 @@
-const { USER_STATUS } = require("../constant/auth");
-
 module.exports = (sequelize, DataTypes, UUIDV4) => {
   const College = sequelize.define(
     "colleges",
@@ -10,20 +8,6 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         defaultValue: UUIDV4,
       },
       name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-      },
-      email_verified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      contact_number: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -38,15 +22,6 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       auth_id: {
         type: DataTypes.UUID,
         allowNull: false,
-      },
-      status: {
-        type: DataTypes.ENUM(
-          USER_STATUS.ACTIVE,
-          USER_STATUS.DELETED,
-          USER_STATUS.IN_ACTIVE,
-          USER_STATUS.PENDING
-        ),
-        defaultValue: USER_STATUS.PENDING,
       },
       pincode: { type: DataTypes.STRING, allowNull: true, default: null },
       address: { type: DataTypes.STRING, allowNull: true, default: null },
@@ -67,7 +42,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
     College.hasMany(models.students, { foreignKey: "college_id" });
     College.belongsTo(models.states, { foreignKey: "state_id" });
     College.belongsTo(models.districts, { foreignKey: "district_id" });
-    College.belongsTo(models.auths, { foreignKey: "id" });
+    College.belongsTo(models.auths, { foreignKey: "auth_id" });
   };
   return College;
 };

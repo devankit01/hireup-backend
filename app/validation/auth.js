@@ -55,9 +55,10 @@ exports.recruiterSignUp = Joi.object({
   contact_number: Joi.string().required(),
   name: Joi.string().required(),
   device_id: Joi.string().required(),
+  company_id: Joi.string().required(),
   device_token: Joi.string().required(),
   device_type: Joi.string().default(DEFAULT_VALUE_LIST.DEVICE).optional(),
-});
+}).unknown(false);
 
 exports.login = Joi.object({
   email: email,
@@ -89,5 +90,5 @@ exports.resetPassword = Joi.object({
 exports.changePassword = Joi.object({
   oldPassword: password,
   newPassword: password,
-  logout: Joi.boolean(),
+  //  logout: Joi.boolean(),
 }).unknown(false);

@@ -1,4 +1,4 @@
-const { USER_STATUS, COMPANY_TYPE } = require("../constant/auth");
+const { COMPANY_TYPE } = require("../constant/auth");
 
 module.exports = (sequelize, DataTypes, UUIDV4) => {
   const Company = sequelize.define(
@@ -10,20 +10,6 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         defaultValue: UUIDV4,
       },
       name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-      },
-      email_verified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      contact_number: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -42,15 +28,6 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
           COMPANY_TYPE.MNC
         ),
         allowNull: false,
-      },
-      status: {
-        type: DataTypes.ENUM(
-          USER_STATUS.ACTIVE,
-          USER_STATUS.DELETED,
-          USER_STATUS.IN_ACTIVE,
-          USER_STATUS.PENDING
-        ),
-        defaultValue: USER_STATUS.PENDING,
       },
       auth_id: {
         type: DataTypes.UUID,
@@ -72,9 +49,10 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
     }
   );
   Company.associate = (models) => {
+    Company.hasMany(models.companies, { foreignKey: "company_id" });
     Company.belongsTo(models.states, { foreignKey: "state_id" });
     Company.belongsTo(models.districts, { foreignKey: "district_id" });
-    Company.belongsTo(models.auths, { foreignKey: "id" });
+    Company.belongsTo(models.auths, { foreignKey: "auth_id" });
   };
   return Company;
 };

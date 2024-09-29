@@ -35,13 +35,14 @@ routes.post(
   controller.companySignUp
 );
 
-// routes.post(
-//   "/recruiter/signup",
-//   reqValidator(schema.recruiterSignUp),
-//   controller.checkUserPhoneExists,
-//   controller.checkUserEmailExists,
-//   controller.recruiterSignUp
-// );
+routes.post(
+  "/recruiter/signup",
+  reqValidator(schema.recruiterSignUp),
+  controller.checkUserPhoneExists,
+  controller.checkUserEmailExists,
+  controller.checkCompanyExists,
+  controller.recruiterSignUp
+);
 
 routes.post(
   "/login",
@@ -64,6 +65,13 @@ routes.post(
   verifyToken,
   reqValidator(schema.forgotPassword),
   controller.resendOtp
+);
+
+routes.post(
+  "/change-password",
+  verifyToken,
+  reqValidator(schema.changePassword),
+  controller.changePassword
 );
 
 routes.post(

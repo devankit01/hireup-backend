@@ -1,6 +1,8 @@
+const { USER_STATUS } = require("../constant/auth");
+
 module.exports = (sequelize, DataTypes, UUIDV4) => {
-  const Student = sequelize.define(
-    "students",
+  const Recruiter = sequelize.define(
+    "recruiters",
     {
       id: {
         type: DataTypes.UUID,
@@ -16,11 +18,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         allowNull: false,
         unique: true,
       },
-      roll_number: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      college_id: {
+      company_id: {
         type: DataTypes.UUID,
         allowNull: false,
       },
@@ -30,7 +28,7 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       },
     },
     {
-      tableName: "students",
+      tableName: "recruiters",
       timestamps: true,
       paranoid: true,
       freezeTableName: true,
@@ -39,9 +37,9 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
       deletedAt: "deleted_at",
     }
   );
-  Student.associate = (models) => {
-    Student.belongsTo(models.colleges, { foreignKey: "college_id" });
-    Student.belongsTo(models.auths, { foreignKey: "auth_id" });
+  Recruiter.associate = (models) => {
+    Recruiter.belongsTo(models.companies, { foreignKey: "company_id" });
+    Recruiter.belongsTo(models.auths, { foreignKey: "auth_id" });
   };
-  return Student;
+  return Recruiter;
 };

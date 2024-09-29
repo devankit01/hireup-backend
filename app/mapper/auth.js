@@ -41,13 +41,7 @@ exports.companySignUpMapper = (data) => {
 exports.recruiterSignUpMapper = (data) => {
   return {
     id: data.id,
-    email_verified: data.email_verified,
-    status: data.status,
-    contact_number: data.contact_number,
     name: data.name,
-    email: data.email,
-    role: data.role,
-    user_name: data.user_name,
     token: data.token,
   };
 };
